@@ -2,7 +2,9 @@
 using System.Reflection;
 using UnityEngine;
 using System;
+using System.Diagnostics;
 using System.Linq;
+using Debug = UnityEngine.Debug;
 
 namespace DependencyInjection
 {
@@ -21,7 +23,17 @@ namespace DependencyInjection
                 RegisterProvider(provider);
                 
             }
+
+            // Search all Monobehaviour where you have field injection possible
+            var injectables = FindMonoBehaviours().Where(IsInjectable);
             
+            foreach (var injectable in injectables)
+            {
+                // Inject dependency to the monobehaviour
+                Inject(injectable);
+                
+            }
+
 
         }
 
@@ -49,6 +61,48 @@ namespace DependencyInjection
                 }
 
             }
+
+        }
+
+        void Inject(object instance)
+        {
+            var type = instance.GetType();
+            // Get all the injectable fields
+            var injectableFields = type.GetFields(k_bindingFlags)
+                .Where(member => Attribute.IsDefined(member, typeof(InjectAttribute)));
+
+            foreach (var injectableField in injectableFields)
+            {
+                var fieldType = injectableField.FieldType;
+                // get the instance of the dependency
+                var resolvedInstance = Resolve(fieldType);
+                if (resolvedInstance == null)
+                {
+                    // If some problem occured while trying to resolve dependency
+
+                    throw new Exception($"Failed to inject {fieldType.Name} into {type.Name}");
+
+                }
+                // We set the field to the dependency
+                injectableField.SetValue(instance, resolvedInstance);
+                Debug.Log($"Inject {fieldType.Name} into {type.Name}");
+            }
+
+        }
+
+        bool IsInjectable(MonoBehaviour obj)
+        {
+            var members = obj.GetType().GetMembers(k_bindingFlags);
+            return members.Any(member => Attribute.IsDefined(member, typeof(InjectAttribute)));
+
+        }
+
+        object Resolve(Type type)
+        {
+            // get instance from the registry
+            registry.TryGetValue(type, out var resolvedInstance);
+            return resolvedInstance;
+
 
         }
 

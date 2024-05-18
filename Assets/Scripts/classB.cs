@@ -1,23 +1,10 @@
 ﻿using DefaultNamespace.Services;
-using UnityEngine;
 using DependencyInjection;
+using UnityEngine;
 
 namespace DefaultNamespace
 {
-
-    public class classA
-    {
-        private ServiceA _serviceA;
-
-        [Inject]
-        public void Init(ServiceA s)
-        {
-            _serviceA = s;
-        }
-        
-    }
-    
-    public class classB
+    public class classB:MonoBehaviour
     {
         [Inject] private ServiceA _serviceA;
         [Inject] private ServiceB _serviceB;
