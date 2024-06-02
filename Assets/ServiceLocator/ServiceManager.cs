@@ -10,7 +10,7 @@ namespace ServiceLocator
 
         public IEnumerable<object> RegisteredServices => services.Values;
 
-        public bool Get<T>(out T service) where T : class
+        public bool TryGet<T>(out T service) where T : class
         {
             Type type = typeof(T);
             if (services.TryGetValue(type, out object serviceObj))
@@ -61,7 +61,7 @@ namespace ServiceLocator
 
             }
 
-            if (!services.TryAdd(type, services))
+            if (!services.TryAdd(type, service))
             {
 
                 Debug.LogError($"ServiceManager.Register: Service of type {type.FullName} already registered");
@@ -71,6 +71,13 @@ namespace ServiceLocator
             return this;
 
 
+        }
+
+        public void GotThis()
+        {
+            
+            Debug.Log("Got the service manager");
+            
         }
         
         
