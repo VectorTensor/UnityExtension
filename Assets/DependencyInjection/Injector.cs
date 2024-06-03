@@ -8,8 +8,12 @@ using Debug = UnityEngine.Debug;
 
 namespace DependencyInjection
 {
+    
+    [DefaultExecutionOrder(-1000)]
     public class Injector : MonoBehaviour
     {
+        // Make this singleton
+        
         private const BindingFlags k_bindingFlags =
             BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
 
@@ -33,6 +37,7 @@ namespace DependencyInjection
                 Inject(injectable);
                 
             }
+            
 
 
         }
@@ -85,8 +90,31 @@ namespace DependencyInjection
                 }
                 // We set the field to the dependency
                 injectableField.SetValue(instance, resolvedInstance);
-                Debug.Log($"Inject {fieldType.Name} into {type.Name}");
+                Debug.Log($"Field Inject {fieldType.Name} into {type.Name}");
             }
+
+            var injectableMethods = type.GetMethods(k_bindingFlags)
+                .Where(member => Attribute.IsDefined(member, typeof(InjectAttribute)));
+
+            foreach (var injectableMethod in injectableMethods)
+            {
+
+                var requiredParameters = injectableMethod.GetParameters().Select(parameter => parameter.ParameterType)
+                    .ToArray();
+                var resolvedInstances = requiredParameters.Select(Resolve).ToArray();
+                if (resolvedInstances.Any(resolvedInstance => resolvedInstance == null))
+                {
+                    throw new Exception($"Failed to inject {type.Name}.{injectableMethod.Name}");
+
+                }
+
+                injectableMethod.Invoke(instance, resolvedInstances);
+                Debug.Log($"Method Injected {type.Name}.{injectableMethod.Name}");
+
+
+            }
+            
+            
 
         }
 

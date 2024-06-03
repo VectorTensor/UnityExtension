@@ -17,5 +17,12 @@ namespace DefaultNamespace
 
         }
 
+        void Start()
+        {
+            _serviceA.Initalize("Service A initialize from class B");
+            _serviceB.Initalize("Service B initialize from class B");
+            _factoryA.CreateServiceA().Initalize("Service A initialize from Factory A ");
+        }
+
     }
 }
