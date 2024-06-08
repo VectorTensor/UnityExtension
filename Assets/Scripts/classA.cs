@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace DefaultNamespace
 {
-    public class classA:BasicSingleton<classA>
+    public class classA:PersistentSingleton<classA>
     {
         private ServiceA _serviceA;
 
