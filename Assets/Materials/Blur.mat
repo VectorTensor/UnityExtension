@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Blur
-  m_Shader: {fileID: 4800000, guid: 9f830ad69b564f9c8e87868534bb3d90, type: 3}
+  m_Shader: {fileID: 4800000, guid: 891665bd4e98452eb97b0fd12f7dfaeb, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 4
