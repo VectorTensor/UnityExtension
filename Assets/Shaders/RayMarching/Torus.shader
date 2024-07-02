@@ -15,10 +15,7 @@ Shader "Unlit/Torus"
             #pragma fragment frag
 
             #include "UnityCG.cginc"
-            #define  MAX_STEPS 100 
-            #define MAX_DIST 100 
-            #define SURF_DIST 1e-3
-
+            #include "../Utilities/raymarchingHelper.cginc"
             struct appdata
             {
                 float4 vertex : POSITION;
@@ -36,7 +33,34 @@ Shader "Unlit/Torus"
 
             sampler2D _MainTex;
             float4 _MainTex_ST;
-            
+                
+            float RayMarch(float3 ro, float3 rd)
+            {
+                float d0 = 0;
+                float dS;
+                for (int i=0;i<= MAX_STEPS;i++)
+                {
+                    float3 p = ro + d0 *rd;
+                    dS = TorusDist(p);
+                    d0 +=dS;
+                    if(dS<SURF_DIST || d0 > MAX_DIST) break;
+                    
+                }
+                return d0;
+            }
+            float3 GetNormal(float3 p)
+            {
+
+                float2 e = float2(1e-2,0);
+                float3 n = TorusDist(p) - float3(
+
+                TorusDist(p- e.xyy),
+                TorusDist(p-e.yxy),
+                TorusDist(p-e.yyx)
+                );
+                return normalize(n);
+                
+            }
 
             v2f vert (appdata v)
             {
@@ -48,61 +72,6 @@ Shader "Unlit/Torus"
                 return o;
             }
             
-            float GetDist(float3 p)
-            {
-
-                float d ;
-                d = length(float2(length(p.xz) - .5, p.y))-0.1;
-                return d;
-                
-                
-            }
-            
-
-            float sdCone( float3 p, float2 c, float h )
-            {
-              // c is the sin/cos of the angle, h is height
-              // Alternatively pass q instead of (c,h),
-              // which is the point at the base in 2D
-              float2 q = h*float2(c.x/c.y,-1.0);
-                
-              float2 w = float2( length(p.xz), p.y );
-              float2 a = w - q*clamp( dot(w,q)/dot(q,q), 0.0, 1.0 );
-              float2 b = w - q*float2( clamp( w.x/q.x, 0.0, 1.0 ), 1.0 );
-              float k = sign( q.y );
-              float d = min(dot( a, a ),dot(b, b));
-              float s = max( k*(w.x*q.y-w.y*q.x),k*(w.y-q.y)  );
-              return sqrt(d)*sign(s);
-            }
-
-            float RayMarch(float3 ro, float3 rd)
-            {
-                float d0 = 0;
-                float dS;
-                for (int i=0;i<= MAX_STEPS;i++)
-                {
-                    float3 p = ro + d0 *rd;
-                    dS = sdCone(p,float2(0.1,0.1),0.4);
-                    d0 +=dS;
-                    if(dS<SURF_DIST || d0 > MAX_DIST) break;
-                    
-                }
-                return d0;
-            }
-            float3 GetNormal(float3 p)
-            {
-
-                float2 e = float2(1e-2,0);
-                float3 n = GetDist(p) - float3(
-
-                GetDist(p- e.xyy),
-                GetDist(p-e.yxy),
-                GetDist(p-e.yyx)
-                );
-                return normalize(n);
-                
-            }
-
             float4 frag (v2f i) : SV_Target
             {
                 float2 uv = i.uv - 0.5;
@@ -125,6 +94,7 @@ Shader "Unlit/Torus"
                 }
                 return col;
             }
+            
             ENDCG
         }
     }
