@@ -16,6 +16,7 @@ Shader "Unlit/Torus"
 
             #include "UnityCG.cginc"
             #include "../Utilities/raymarchingHelper.cginc"
+            #include "../Utilities/LighningUtils.cginc"
             struct appdata
             {
                 float4 vertex : POSITION;
@@ -85,7 +86,7 @@ Shader "Unlit/Torus"
                 {
                     float3 p = ro + rd * d;
                     float3 n = GetNormal(p);
-                    col.rgb = n;
+                    col.rgb =GetFlatShading(n);
                     
                 }
                 else
