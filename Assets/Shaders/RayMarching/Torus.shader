@@ -86,7 +86,7 @@ Shader "Unlit/Torus"
                 {
                     float3 p = ro + rd * d;
                     float3 n = GetNormal(p);
-                    col.rgb =GetFlatShading(n);
+                    col.rgb =GetBasicShading(n);
                     
                 }
                 else

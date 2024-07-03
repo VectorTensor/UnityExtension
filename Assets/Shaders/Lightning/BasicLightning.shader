@@ -49,7 +49,7 @@
                 v2f o;
                 o.vertex = UnityObjectToClipPos(v.vertex);
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-                o.flatLighting = GetFlatShading(v.normal);
+                o.flatLighting = GetBasicShading(v.normal);
                 return o;
             }
 

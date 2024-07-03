@@ -1,7 +1,8 @@
 ﻿
 #include "Lighting.cginc"
 
-float4 GetFlatShading(float3 normals)
+// Get ambient and diffuse lighting
+float4 GetBasicShading(float3 normals)
 {
 
     float3 ambient = ShadeSH9(half4(normals, 1));
