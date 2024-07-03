@@ -1,10 +1,11 @@
 ﻿using DefaultNamespace.Services;
 using DependencyInjection;
+using GenericSingleton;
 using UnityEngine;
 
 namespace DefaultNamespace
 {
-    public class classA:MonoBehaviour
+    public class classA:PersistentSingleton<classA>
     {
         private ServiceA _serviceA;
 
