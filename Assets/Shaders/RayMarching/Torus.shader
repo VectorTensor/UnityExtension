@@ -1,15 +1,28 @@
-Shader "Unlit/Torus"
+Shader "Raymarching/Torus"
 {
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
+        
+        _MainColor("Color",Color)= (1,1,1,1)
+        
+        _GlossPower("Gloss Power", Float) = 400 
     }
     SubShader
     {
-        Tags { "RenderType"="Opaque" }
+        Tags
+        {
+            "RenderType"="Opaque"
+             "Queue" = "Geometry"
+        }
 
         Pass
         {
+            
+            Tags
+            {
+                "LightMode" = "ForwardBase"
+            }
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
@@ -30,10 +43,13 @@ Shader "Unlit/Torus"
                 
                 float3 ro : TEXCOORD1;
                 float3 hitPos : TEXCOORD2;
+                float3 viewdir : TEXCOORD3;
             };
 
             sampler2D _MainTex;
             float4 _MainTex_ST;
+            float4 _MainColor;
+            float _GlossPower;
                 
             float RayMarch(float3 ro, float3 rd)
             {
@@ -70,6 +86,7 @@ Shader "Unlit/Torus"
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
                 o.ro =mul(unity_WorldToObject, float4(_WorldSpaceCameraPos,1));
                 o.hitPos = v.vertex;
+                o.viewdir = UnityObjectToWorldDir(v.vertex);
                 return o;
             }
             
@@ -80,13 +97,16 @@ Shader "Unlit/Torus"
                 float3 rd = normalize(i.hitPos- ro);
                 float d = RayMarch(ro, rd);
                 
-                
+
+                float view = normalize(i.viewdir);
                 float4 col = 0;
                 if (d<MAX_DIST)
                 {
                     float3 p = ro + rd * d;
                     float3 n = GetNormal(p);
-                    col.rgb =GetBasicShading(n);
+                    float4 diffuse = GetBasicShading(n);
+                    float4 spec = GetSpecularShading(n,diffuse,view,_GlossPower);
+                    col = _MainColor*diffuse + spec;
                     
                 }
                 else
