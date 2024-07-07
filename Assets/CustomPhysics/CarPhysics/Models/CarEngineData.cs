@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Physics.CarPhysics.Models
+namespace CustomPhysics.CarPhysics.Models
 {
     [CreateAssetMenu(fileName = "CarEngineData", menuName = "CarPhysics/CarEngineData", order = 0)]
     public class CarEngineData : ScriptableObject
