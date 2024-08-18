@@ -22,9 +22,7 @@ namespace CustomPhysics.CarPhysics.Controller
         /// F = offset * strength - velocity * damping
         /// </summary>
         /// <param name="offset"></param>
-        /// <param name="strength"></param>
         /// <param name="velocity"></param>
-        /// <param name="damping"></param>
         /// <returns></returns>
         public float CalculateSuspensionForce(float offset, float velocity)
         {
@@ -39,8 +37,6 @@ namespace CustomPhysics.CarPhysics.Controller
                 float offset = _restDistance - hit.distance;
                 rb.AddForce(CalculateSuspensionForce(offset,rb.velocity.y)*Vector3.up,ForceMode.Force);
                 Debug.DrawRay(_tireObject.position, Vector3.down * hit.distance, Color.red );
-                
-
 
             }
             
