@@ -10,6 +10,11 @@ namespace EventManager
     {
         public Action<T> OnEvent { get; set; }
         public Action OnEventNoArgs { get; set; }
+        
+        public void Add(Action action);
+        public void Add(Action<T> action);
+        public void Remove(Action<T> action);
+        public void Remove(Action action);
     }
 
     public class EventBinding<T> : IEventBinding<T> where T : IEvent
