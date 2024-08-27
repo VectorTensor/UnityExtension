@@ -17,7 +17,7 @@ namespace EventManager
         public void Remove(Action action);
     }
 
-    public class EventBinding<T> : IEventBinding<T> where T : IEvent
+    public class EventBinding<T> : IEventBinding<T> 
     {
         Action<T> onEvent;
         Action onEventNoArgs;

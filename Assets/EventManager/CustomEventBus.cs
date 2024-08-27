@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace EventManager
 {
-    public static class EventBus
+    public static class CustomEventBus
     {
         
         private static Dictionary<string, IEventBinding<IEvent>> _eventsStore= new Dictionary<string, IEventBinding<IEvent>>();
@@ -17,6 +17,24 @@ namespace EventManager
             {
                 _eventsStore.Add(key, eventBinding);
                 Debug.Log($"Successfully created event {key}");
+            }
+        }
+
+        public static void InvokeEvent(string key)
+        {
+            if (_eventsStore.TryGetValue(key, out IEventBinding<IEvent> eventBinding))
+            {
+                eventBinding.OnEventNoArgs?.Invoke();
+                
+            }
+            
+        }
+
+        public static void InvokeEvent(string key, IEvent @event)
+        {
+            if (_eventsStore.TryGetValue(key, out IEventBinding<IEvent> eventBinding))
+            {
+                eventBinding.OnEvent?.Invoke(@event);
             }
         }
 
